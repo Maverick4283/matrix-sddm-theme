@@ -1,0 +1,23 @@
+[SddmGreeterTheme]
+Name=Matrix Trilogy
+Description=A Matrix-inspired SDDM theme with falling code rain, depth effect, and Morpheus hands with pills. Multi-monitor adaptive.
+Author=VORAGO
+Copyright=2026 VORAGO
+Email=mens@tutamail.com
+License=MIT
+Type=sddm-theme
+Theme-Id=matrix-trilogy
+MainScript=Main.qml
+ConfigFile=theme.conf
+Screenshot=preview.png
+Version=1.0.0
+Theme-API=2.0
+
+
+
+
+
+
+
+
+
