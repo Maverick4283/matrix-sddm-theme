@@ -2,10 +2,10 @@
 // MATRIX TRILOGY SDDM THEME - Main Entry Point
 // =============================================================================
 
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.15
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
 import SddmComponents 2.0
 
 import "components"
@@ -124,7 +124,7 @@ Rectangle {
         
         screens.sort(function(a, b) { return a.x - b.x })
         
-        var currentX = root.Window.window ? root.Window.window.x : 0
+        var currentX = root.Screen.virtualX
         var screenIndex = 0
         for (var j = 0; j < screens.length; j++) {
             if (Math.abs(screens[j].x - currentX) < 100) {

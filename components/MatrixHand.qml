@@ -2,7 +2,7 @@
 // MATRIX HAND COMPONENT (STATIC VERSION) - Matrix Trilogy SDDM Theme
 // =============================================================================
 
-import QtQuick 2.15
+import QtQuick
 
 Item {
     id: root
