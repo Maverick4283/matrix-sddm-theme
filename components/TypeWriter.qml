@@ -3,7 +3,7 @@
 // =============================================================================
 
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Item {
     id: root
@@ -81,11 +81,14 @@ Item {
                 font.bold: false
                 
                 layer.enabled: true
-                layer.effect: Glow {
-                    radius: 8
-                    samples: 17
-                    color: root.glowColor
-                    spread: 0.3
+                layer.effect: MultiEffect {
+                    autoPaddingEnabled: true
+                    shadowEnabled: true
+                    shadowColor: root.glowColor
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                    shadowBlur: 0.5
+                    shadowOpacity: 0.85
                 }
             }
         }
@@ -108,11 +111,14 @@ Item {
                 anchors.left: parent.left
                 
                 layer.enabled: true
-                layer.effect: Glow {
-                    radius: 8
-                    samples: 17
-                    color: root.glowColor
-                    spread: 0.3
+                layer.effect: MultiEffect {
+                    autoPaddingEnabled: true
+                    shadowEnabled: true
+                    shadowColor: root.glowColor
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                    shadowBlur: 0.5
+                    shadowOpacity: 0.85
                 }
             }
             
@@ -125,11 +131,14 @@ Item {
                 anchors.left: prefixText.right
                 
                 layer.enabled: true
-                layer.effect: Glow {
-                    radius: 8
-                    samples: 17
-                    color: root.glowColor
-                    spread: 0.3
+                layer.effect: MultiEffect {
+                    autoPaddingEnabled: true
+                    shadowEnabled: true
+                    shadowColor: root.glowColor
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                    shadowBlur: 0.5
+                    shadowOpacity: 0.85
                 }
             }
             
@@ -147,11 +156,14 @@ Item {
                 anchors.verticalCenter: typingText.verticalCenter
                 
                 layer.enabled: true
-                layer.effect: Glow {
-                    radius: 8
-                    samples: 17
-                    color: root.glowColor
-                    spread: 0.3
+                layer.effect: MultiEffect {
+                    autoPaddingEnabled: true
+                    shadowEnabled: true
+                    shadowColor: root.glowColor
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                    shadowBlur: 0.5
+                    shadowOpacity: 0.85
                 }
             }
         }

@@ -12,7 +12,7 @@ ConfigFile=theme.conf
 Screenshot=preview.png
 Version=1.0.0
 Theme-API=2.0
-
+QtVersion=6
 
 
 

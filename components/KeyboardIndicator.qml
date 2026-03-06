@@ -3,7 +3,7 @@
 // =============================================================================
 
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import SddmComponents 2.0
 
 Item {
@@ -227,11 +227,14 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             
             layer.enabled: true
-            layer.effect: Glow {
-                radius: 4
-                samples: 9
-                color: root.glowColor
-                spread: 0.2
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.glowColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 0.35
+                shadowOpacity: 0.7
             }
         }
         

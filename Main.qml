@@ -5,7 +5,6 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 import SddmComponents 2.0
 
 import "components"
@@ -287,9 +286,9 @@ Rectangle {
                 width:  legendColumn.width  + Math.round(18 * root.scaleFactor)
                 height: legendColumn.height + Math.round(18 * root.scaleFactor)
 
-                color:  legendHover.containsMouse ? "#FFF8C0" : Qt.rgba(0.42, 0.35, 0.08, 0.35)
+                color:  legendHover.hovered ? "#FFF8C0" : Qt.rgba(0.42, 0.35, 0.08, 0.35)
                 radius: 3
-                border.color: legendHover.containsMouse ? "#C8A800" : Qt.rgba(0.24, 0.20, 0.03, 0.4)
+                border.color: legendHover.hovered ? "#C8A800" : Qt.rgba(0.24, 0.20, 0.03, 0.4)
                 border.width: 1
 
                 Column {
@@ -299,7 +298,7 @@ Rectangle {
 
                     Text {
                         text: "SESSIONS:"
-                        color: legendHover.containsMouse ? "#1A1A00" : "#C8A050"
+                        color: legendHover.hovered ? "#1A1A00" : "#C8A050"
                         font.family: uiFont.name
                         font.pixelSize: Math.round(13 * root.scaleFactor)
                         font.bold: true
@@ -308,7 +307,7 @@ Rectangle {
                     Rectangle {
                         width: legendColumn.width
                         height: 1
-                        color: legendHover.containsMouse ? "#C8A800" : "#7A6020"
+                        color: legendHover.hovered ? "#C8A800" : "#7A6020"
                         opacity: 0.5
                     }
 
@@ -321,14 +320,14 @@ Rectangle {
 
                             Text {
                                 text: String(index + 1)
-                                color: legendHover.containsMouse ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
+                                color: legendHover.hovered ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
                                 font.family: uiFont.name
                                 font.pixelSize: Math.round(14 * root.scaleFactor)
                                 font.bold: isSelected
                             }
                             Text {
                                 text: model.name || "Session"
-                                color: legendHover.containsMouse ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
+                                color: legendHover.hovered ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
                                 font.family: uiFont.name
                                 font.pixelSize: Math.round(14 * root.scaleFactor)
                                 font.bold: isSelected
@@ -337,11 +336,8 @@ Rectangle {
                     }
                 }
 
-                MouseArea {
+                HoverHandler {
                     id: legendHover
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
                 }
             }
 

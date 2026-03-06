@@ -3,7 +3,7 @@
 // =============================================================================
 
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Item {
     id: root
@@ -201,11 +201,14 @@ Item {
             
             // Glow effect
             layer.enabled: true
-            layer.effect: Glow {
-                radius: 12
-                samples: 25
-                color: root.glowColor
-                spread: 0.4
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.glowColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 0.65
+                shadowOpacity: 1.0
             }
         }
         
@@ -223,11 +226,14 @@ Item {
             
             // Subtle glow
             layer.enabled: true
-            layer.effect: Glow {
-                radius: 8
-                samples: 17
-                color: root.glowColor
-                spread: 0.3
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.glowColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 0.5
+                shadowOpacity: 0.85
             }
         }
     }

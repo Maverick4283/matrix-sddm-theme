@@ -4,7 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import SddmComponents 2.0
 
 Item {
@@ -309,7 +309,15 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             
             layer.enabled: true
-            layer.effect: Glow { radius: 6; samples: 13; color: root.matrixColor; spread: 0.3 }
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.matrixColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 0.4
+                shadowOpacity: 0.85
+            }
         }
         
         Rectangle { width: parent.width; height: 1; color: root.matrixColor; opacity: 0.5 }
@@ -658,7 +666,15 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             
                             layer.enabled: true
-                            layer.effect: Glow { radius: 4; samples: 9; color: root.matrixColor; spread: 0.3 }
+                            layer.effect: MultiEffect {
+                                autoPaddingEnabled: true
+                                shadowEnabled: true
+                                shadowColor: root.matrixColor
+                                shadowHorizontalOffset: 0
+                                shadowVerticalOffset: 0
+                                shadowBlur: 0.35
+                                shadowOpacity: 0.85
+                            }
                         }
                         
                         Rectangle {
@@ -714,7 +730,15 @@ Item {
             }
             
             layer.enabled: true
-            layer.effect: Glow { radius: loginMouse.containsMouse ? 10 : 4; samples: 17; color: root.matrixColor; spread: 0.2 }
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.matrixColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: loginMouse.containsMouse ? 0.6 : 0.35
+                shadowOpacity: 0.8
+            }
         }
         
         // --- SESSION ROTARY DIAL ---
@@ -810,7 +834,15 @@ Item {
                         border.width: isSelected ? 2 : 1
                         opacity: isSelected ? 1.0 : 0.5
                         layer.enabled: isSelected
-                        layer.effect: Glow { radius: 7; samples: 15; color: root.matrixColor; spread: 0.4 }
+                        layer.effect: MultiEffect {
+                            autoPaddingEnabled: true
+                            shadowEnabled: true
+                            shadowColor: root.matrixColor
+                            shadowHorizontalOffset: 0
+                            shadowVerticalOffset: 0
+                            shadowBlur: 0.45
+                            shadowOpacity: 1.0
+                        }
 
                         Text {
                             anchors.centerIn: parent
@@ -855,13 +887,11 @@ Item {
             }
 
             // Scroll-wheel
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
-                onWheel: function(wheel) {
+            WheelHandler {
+                onWheel: function(event) {
                     var n = rotaryDial.sessCount
                     if (n <= 1) return
-                    if (wheel.angleDelta.y < 0)
+                    if (event.angleDelta.y < 0)
                         root.selectedSessionIndex = (root.selectedSessionIndex + 1) % n
                     else
                         root.selectedSessionIndex = (root.selectedSessionIndex - 1 + n) % n
@@ -894,11 +924,14 @@ Item {
         
         // Glow effect for border
         layer.enabled: true
-        layer.effect: Glow {
-            radius: 10
-            samples: 21
-            color: "#FF0000"
-            spread: 0.4
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: true
+            shadowEnabled: true
+            shadowColor: "#FF0000"
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+            shadowBlur: 0.6
+            shadowOpacity: 1.0
         }
         
         // Error message
@@ -911,11 +944,14 @@ Item {
             font.bold: true
             
             layer.enabled: true
-            layer.effect: Glow {
-                radius: 1
-                samples: 13
-                color: root.errorColor
-                spread: 0.3
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: true
+                shadowEnabled: true
+                shadowColor: root.errorColor
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 0.2
+                shadowOpacity: 0.85
             }
         }
         
