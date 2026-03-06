@@ -19,11 +19,14 @@ Item {
     // Glow color
     property color glowColor: "#00FF41"
     
+    // Scale factor (driven by Main.qml)
+    property real scaleFactor: 1.0
+
     // Time font size
-    property int timeFontSize: 64
-    
+    property int timeFontSize: Math.round(64 * scaleFactor)
+
     // Date font size
-    property int dateFontSize: 28
+    property int dateFontSize: Math.round(28 * scaleFactor)
     
     // --- Format ---
     // Time format (Qt format string)

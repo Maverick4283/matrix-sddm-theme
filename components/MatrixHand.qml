@@ -177,12 +177,12 @@ Item {
             // FINAL VALUES - hands adjusted manually to the center !
             if (root.handType === "right") {
                 // Right Hand (Left Monitor, red pill)
-                offsetX = offsetX - 150
-                offsetY = offsetY - 150
+                offsetX = offsetX - width * 0.078
+                offsetY = offsetY - height * 0.139
             } else {
                 // Left Hand (Right Monitor, blue pill)
-                offsetX = offsetX - 50
-                offsetY = offsetY - 150
+                offsetX = offsetX - width * 0.026
+                offsetY = offsetY - height * 0.139
             }
 
             var fontFamily = monoFont.status === FontLoader.Ready ? monoFont.name : "monospace"

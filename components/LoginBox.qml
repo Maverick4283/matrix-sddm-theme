@@ -18,8 +18,9 @@ Item {
     property color borderColor: "#00FF41"
     property color errorColor: "#FF0000"
     property bool showAvatar: true
-    property int boxWidth: 420
-    property int boxHeight: 550
+    property real scaleFactor: 1.0
+    property int boxWidth: Math.round(420 * scaleFactor)
+    property int boxHeight: Math.round(550 * scaleFactor)
     property real backgroundOpacity: 0.70
     
     property int selectedUserIndex: 0
@@ -326,15 +327,15 @@ Item {
     
     Column {
         anchors.fill: parent
-        anchors.margins: 25
-        spacing: 15
+        anchors.margins: Math.round(25 * scaleFactor)
+        spacing: Math.round(15 * scaleFactor)
         
         // --- HEADER ---
         Text {
             text: "> MATRIX SYSTEM LOGIN"
             color: root.matrixColor
             font.family: monoFont.name
-            font.pixelSize: 16
+            font.pixelSize: Math.round(16 * scaleFactor)
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             
@@ -346,12 +347,12 @@ Item {
         
         // --- USER SECTION ---
         Row {
-            spacing: 15
+            spacing: Math.round(15 * scaleFactor)
             
             // Avatar - Neo's Glasses with Pills
             Rectangle {
-                width: 100
-                height: 100
+                width: Math.round(100 * scaleFactor)
+                height: Math.round(100 * scaleFactor)
                 color: "transparent"
                 border.color: root.matrixColor
                 border.width: 1
@@ -516,14 +517,14 @@ Item {
                     text: "USER:"
                     color: root.matrixColor
                     font.family: monoFont.name
-                    font.pixelSize: 11
+                    font.pixelSize: Math.round(11 * scaleFactor)
                     opacity: 0.7
                 }
                 
                 Rectangle {
                     id: userDrop
-                    width: 190
-                    height: 38
+                    width: Math.round(190 * scaleFactor)
+                    height: Math.round(38 * scaleFactor)
                     color: Qt.rgba(0, 0.1, 0, 0.5)
                     border.color: root.matrixColor
                     border.width: 1
@@ -535,7 +536,7 @@ Item {
                         text: root.currentUsername || "User"
                         color: root.matrixColor
                         font.family: monoFont.name
-                        font.pixelSize: 14
+                        font.pixelSize: Math.round(14 * scaleFactor)
                         anchors.left: parent.left
                         anchors.leftMargin: 10
                         anchors.right: userArrow.left
@@ -548,7 +549,7 @@ Item {
                         id: userArrow
                         text: userDrop.open ? "▲" : "▼"
                         color: root.matrixColor
-                        font.pixelSize: 10
+                        font.pixelSize: Math.round(10 * scaleFactor)
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         anchors.verticalCenter: parent.verticalCenter
@@ -583,7 +584,7 @@ Item {
                             
                             delegate: Rectangle {
                                 width: ListView.view ? ListView.view.width : 180
-                                height: 32
+                                height: Math.round(32 * scaleFactor)
                                 color: delMouse.containsMouse ? Qt.rgba(0, 0.2, 0, 0.6) : "transparent"
                                 
                                 Text {
@@ -593,7 +594,7 @@ Item {
                                     text: model.name || "User"
                                     color: root.matrixColor
                                     font.family: monoFont.name
-                                    font.pixelSize: 13
+                                    font.pixelSize: Math.round(13 * scaleFactor)
                                 }
                                 
                                 MouseArea {
@@ -623,14 +624,14 @@ Item {
                 text: "PASSWORD:"
                 color: root.matrixColor
                 font.family: monoFont.name
-                font.pixelSize: 11
+                font.pixelSize: Math.round(11 * scaleFactor)
                 opacity: 0.7
             }
             
             Rectangle {
                 id: pwdBox
                 width: parent.width
-                height: 42
+                height: Math.round(42 * scaleFactor)
                 color: Qt.rgba(0, 0.1, 0, 0.5)
                 border.color: passwordInput.activeFocus ? root.matrixColor : Qt.darker(root.matrixColor, 1.5)
                 border.width: passwordInput.activeFocus ? 2 : 1
@@ -669,7 +670,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
-                    height: 24
+                    height: Math.round(24 * scaleFactor)
                     clip: true
                     
                     Row {
@@ -683,7 +684,7 @@ Item {
                             text: root.getPasswordDisplay()
                             color: root.matrixColor
                             font.family: monoFont.name
-                            font.pixelSize: 18
+                            font.pixelSize: Math.round(18 * scaleFactor)
                             font.letterSpacing: 4
                             anchors.verticalCenter: parent.verticalCenter
                             
@@ -717,8 +718,8 @@ Item {
 
         // --- LOGIN BUTTON ---
         Rectangle {
-            width: 160
-            height: 42
+            width: Math.round(160 * scaleFactor)
+            height: Math.round(42 * scaleFactor)
             anchors.horizontalCenter: parent.horizontalCenter
             color: loginMouse.containsMouse ? Qt.rgba(0, 0.3, 0, 0.8) : Qt.rgba(0, 0.15, 0, 0.5)
             border.color: root.matrixColor
@@ -730,7 +731,7 @@ Item {
                 text: root.isLoggingIn ? "CONNECTING..." : "> LOGIN"
                 color: root.matrixColor
                 font.family: monoFont.name
-                font.pixelSize: 14
+                font.pixelSize: Math.round(14 * scaleFactor)
                 font.bold: true
             }
             
@@ -750,12 +751,12 @@ Item {
         // --- SESSION SELECTOR ---
         Item {
             width: parent.width
-            height: 35
+            height: Math.round(35 * scaleFactor)
             
             Rectangle {
                 id: sessDrop
-                width: 170
-                height: 28
+                width: Math.round(170 * scaleFactor)
+                height: Math.round(28 * scaleFactor)
                 anchors.centerIn: parent
                 color: "transparent"
                 border.color: root.matrixColor
@@ -769,7 +770,7 @@ Item {
                     text: root.currentSessionName
                     color: root.matrixColor
                     font.family: monoFont.name
-                    font.pixelSize: 11
+                    font.pixelSize: Math.round(11 * scaleFactor)
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     anchors.right: sessArrow.left
@@ -782,7 +783,7 @@ Item {
                     id: sessArrow
                     text: sessDrop.open ? "▲" : "▼"
                     color: root.matrixColor
-                    font.pixelSize: 8
+                    font.pixelSize: Math.round(8 * scaleFactor)
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
@@ -817,7 +818,7 @@ Item {
                         
                         delegate: Rectangle {
                             width: ListView.view ? ListView.view.width : 160
-                            height: 28
+                            height: Math.round(28 * scaleFactor)
                             color: sessMouse.containsMouse ? Qt.rgba(0, 0.2, 0, 0.6) : "transparent"
                             
                             Text {
@@ -827,7 +828,7 @@ Item {
                                 text: model.name || "Session"
                                 color: root.matrixColor
                                 font.family: monoFont.name
-                                font.pixelSize: 11
+                                font.pixelSize: Math.round(11 * scaleFactor)
                             }
                             
                             MouseArea {
@@ -850,7 +851,7 @@ Item {
                 text: "SESSION:"
                 color: root.matrixColor
                 font.family: monoFont.name
-                font.pixelSize: 11
+                font.pixelSize: Math.round(11 * scaleFactor)
                 opacity: 0.6
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: sessDrop.left
@@ -864,17 +865,17 @@ Item {
     // --- POWER BUTTONS ---
     Row {
         width: parent.width - 50
-        height: 110
+        height: Math.round(110 * scaleFactor)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 25
+        anchors.bottomMargin: Math.round(25 * scaleFactor)
         
         Item {
             width: parent.width / 3
             height: parent.height
             
             Rectangle {
-                width: 100; height: 100; radius: 50
+                width: Math.round(100 * scaleFactor); height: Math.round(100 * scaleFactor); radius: Math.round(50 * scaleFactor)
                 anchors.centerIn: parent
                 color: shutMouse.containsMouse ? Qt.rgba(0.3, 0, 0, 0.5) : "transparent"
                 border.color: root.matrixColor; border.width: 2
@@ -884,7 +885,7 @@ Item {
                     anchors.centerIn: parent
                     text: "⏻"
                     color: shutMouse.containsMouse ? "#FF6666" : root.matrixColor
-                    font.pixelSize: 44
+                    font.pixelSize: Math.round(44 * scaleFactor)
                 }
                 MouseArea { 
                     id: shutMouse
@@ -903,7 +904,7 @@ Item {
             height: parent.height
             
             Rectangle {
-                width: 100; height: 100; radius: 50
+                width: Math.round(100 * scaleFactor); height: Math.round(100 * scaleFactor); radius: Math.round(50 * scaleFactor)
                 anchors.centerIn: parent
                 color: rebootMouse.containsMouse ? Qt.rgba(0, 0.2, 0, 0.5) : "transparent"
                 border.color: root.matrixColor; border.width: 2
@@ -913,7 +914,7 @@ Item {
                     anchors.centerIn: parent
                     text: "↻"
                     color: root.matrixColor
-                    font.pixelSize: 48
+                    font.pixelSize: Math.round(48 * scaleFactor)
                 }
                 MouseArea {
                     id: rebootMouse
@@ -932,7 +933,7 @@ Item {
             height: parent.height
             
             Rectangle {
-                width: 100; height: 100; radius: 50
+                width: Math.round(100 * scaleFactor); height: Math.round(100 * scaleFactor); radius: Math.round(50 * scaleFactor)
                 anchors.centerIn: parent
                 color: sleepMouse.containsMouse ? Qt.rgba(0, 0, 0.2, 0.5) : "transparent"
                 border.color: root.matrixColor; border.width: 2
@@ -942,7 +943,7 @@ Item {
                     anchors.centerIn: parent
                     text: "◐"
                     color: sleepMouse.containsMouse ? "#6666FF" : root.matrixColor
-                    font.pixelSize: 44
+                    font.pixelSize: Math.round(44 * scaleFactor)
                 }
                 MouseArea {
                     id: sleepMouse
@@ -963,8 +964,8 @@ Item {
     
     Rectangle {
         id: errorPopup
-        width: 630  // 1.5 × LoginBox width (420 × 1.5)
-        height: 100
+        width: Math.round(630 * scaleFactor)  // 1.5 × LoginBox width (420 × 1.5)
+        height: Math.round(100 * scaleFactor)
         anchors.centerIn: parent
         color: Qt.rgba(0.3, 0, 0, 0.10)
         border.color: "#FF0000"
@@ -993,7 +994,7 @@ Item {
             text: "> " + root.errorMessage
             color: root.errorColor
             font.family: monoFont.name
-            font.pixelSize: 50  // Increased for better reading
+            font.pixelSize: Math.round(50 * scaleFactor)  // Increased for better reading
             font.bold: true
             
             layer.enabled: true

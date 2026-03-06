@@ -74,6 +74,7 @@ Rectangle {
     property bool introComplete: false
     property int currentScreen: 0
     property int monitorCount: Qt.application.screens ? Qt.application.screens.length : 1
+    property real scaleFactor: Math.min(width / 1920.0, height / 1080.0)
     color: backgroundColor
     anchors.fill: parent
     
@@ -190,7 +191,7 @@ Rectangle {
             typingSpeed: root.typewriterSpeed
             textColor: root.matrixGreen
             glowColor: root.glowColor
-            fontSize: 28
+            fontSize: Math.round(28 * root.scaleFactor)
             
             onCompleted: {
                 introCompleteTimer.start()
@@ -222,9 +223,10 @@ Rectangle {
                 id: clock
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: loginBox.top
-                anchors.bottomMargin: 40
+                anchors.bottomMargin: Math.round(40 * root.scaleFactor)
                 visible: root.showClock
-                
+
+                scaleFactor: root.scaleFactor
                 textColor: root.matrixGreen
                 glowColor: root.glowColor
                 clockFormat: config.ClockFormat || "HH:mm:ss"
@@ -239,7 +241,8 @@ Rectangle {
                 matrixColor: root.matrixGreen
                 borderColor: root.matrixGreen
                 showAvatar: root.showMatrixAvatar
-                
+                scaleFactor: root.scaleFactor
+
                 // IMPORTANT: Pass intro state to LoginBox (bind to existing property!)
                 introComplete: root.introComplete
                 
@@ -253,15 +256,16 @@ Rectangle {
                 id: quotesDisplay
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 60
+                anchors.bottomMargin: Math.round(60 * root.scaleFactor)
                 visible: root.quotesEnabled
-                
+
                 mode: "quotes"
                 quotes: root.quotesList
                 changeInterval: root.quoteChangeInterval
                 typingSpeed: parseInt(config.QuoteTypingSpeed) || 40
                 textColor: root.matrixGreen
                 glowColor: root.glowColor
+                fontSize: Math.round(24 * root.scaleFactor)
             }
             // Start quotes after completion of intro
             Connections {
@@ -277,11 +281,11 @@ Rectangle {
                 id: keyboardIndicator
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                
+                anchors.bottomMargin: Math.round(20 * root.scaleFactor)
+
                 textColor: root.matrixGreen
                 glowColor: root.glowColor
-                fontSize: 14
+                fontSize: Math.round(14 * root.scaleFactor)
             }
         }
     }
