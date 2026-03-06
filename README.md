@@ -76,9 +76,29 @@ sudo systemctl restart sddm
 
 ### Test Before Applying
 
+**Qt6 greeter (target):**
+```bash
+sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/matrix-trilogy
+```
+
+**Qt5 greeter (legacy):**
 ```bash
 sddm-greeter --test-mode --theme /usr/share/sddm/themes/matrix-trilogy
 ```
+
+**Restrict test to a specific display (Wayland):**
+
+Use the `QT_QPA_SCREEN` environment variable with your output name. Find your output names with `hyprctl monitors`, `wlr-randr`, or `xrandr`:
+
+```bash
+# Example: only open on display DP-3
+QT_QPA_SCREEN=DP-3 sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/matrix-trilogy
+
+# Example: only open on display DP-2
+QT_QPA_SCREEN=DP-2 sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/matrix-trilogy
+```
+
+Replace `DP-3`/`DP-2` with your actual output name from `hyprctl monitors`.
 
 
 ---
