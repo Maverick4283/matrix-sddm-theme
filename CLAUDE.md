@@ -9,6 +9,14 @@
 - Created for the Linux/KDE community
 - Special thanks to SDDM developers
 
+## Target Environment
+
+- **Greeter:** `sddm-greeter-qt6` (Wayland mode invokes this automatically)
+- **Display server:** Wayland (`DisplayServer=wayland` in `/etc/sddm.conf.d/sddm.conf`)
+- **Greeter compositor:** `weston --shell=kiosk` — must be installed: `sudo pacman -S weston`
+- **Default user session:** `hyprland.desktop`
+- **Test command:** `sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/matrix-trilogy`
+
 ## Project Goals
 
 1. **Qt6 compatibility** — Update QML imports and APIs to work with the latest Qt versions.
@@ -38,10 +46,33 @@ fonts/                      # JetBrainsMono, matrix-code.ttf, NotoSansJP
 ascii/                      # ASCII art for left/right monitor hands
 ```
 
+## Local Testing
+
+Test the theme without restarting SDDM using test mode. Run from inside the repo root.
+
+**Qt6 greeter (target):**
+```bash
+sddm-greeter-qt6 --test-mode --theme $PWD
+```
+
+**Qt5 greeter (legacy, current live):**
+```bash
+sddm-greeter --test-mode --theme $PWD
+```
+
+**Against the installed copy** (after `sudo cp -r . /usr/share/sddm/themes/matrix-trilogy`):
+```bash
+sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/matrix-trilogy
+```
+
+Notes:
+- `$PWD` must be the theme root (contains `Main.qml` and `metadata.desktop`)
+- Test mode runs the greeter as your current user — SDDM login/session features won't work, but all visual/animation elements will
+- Close the test window with `Alt+F4` or `Ctrl+C` in the terminal
+
 ## Key Technical Notes
 
 - Theme targets SDDM with Qt/QML rendering
 - Currently imports `QtGraphicalEffects 1.15` — primary Qt6 compat blocker
 - Screen detection uses `screenModel` (SDDM-provided) and `Qt.application.screens`
 - All config values come from `config.*` (bound to `theme.conf`)
-- Test locally: `sddm-greeter-qt6 --test-mode --theme /path/to/theme`

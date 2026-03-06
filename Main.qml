@@ -276,6 +276,75 @@ Rectangle {
                     }
                 }
             }
+            // Session legend — bottom-left
+            Rectangle {
+                id: sessionLegend
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: Math.round(22 * root.scaleFactor)
+                anchors.bottomMargin: Math.round(80 * root.scaleFactor)
+
+                width:  legendColumn.width  + Math.round(18 * root.scaleFactor)
+                height: legendColumn.height + Math.round(18 * root.scaleFactor)
+
+                color:  legendHover.containsMouse ? "#FFF8C0" : Qt.rgba(0.42, 0.35, 0.08, 0.35)
+                radius: 3
+                border.color: legendHover.containsMouse ? "#C8A800" : Qt.rgba(0.24, 0.20, 0.03, 0.4)
+                border.width: 1
+
+                Column {
+                    id: legendColumn
+                    anchors.centerIn: parent
+                    spacing: Math.round(6 * root.scaleFactor)
+
+                    Text {
+                        text: "SESSIONS:"
+                        color: legendHover.containsMouse ? "#1A1A00" : "#C8A050"
+                        font.family: uiFont.name
+                        font.pixelSize: Math.round(13 * root.scaleFactor)
+                        font.bold: true
+                    }
+
+                    Rectangle {
+                        width: legendColumn.width
+                        height: 1
+                        color: legendHover.containsMouse ? "#C8A800" : "#7A6020"
+                        opacity: 0.5
+                    }
+
+                    Repeater {
+                        model: typeof sessionModel !== 'undefined' ? sessionModel : null
+
+                        delegate: Row {
+                            spacing: Math.round(8 * root.scaleFactor)
+                            property bool isSelected: index === loginBox.selectedSessionIndex
+
+                            Text {
+                                text: String(index + 1)
+                                color: legendHover.containsMouse ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
+                                font.family: uiFont.name
+                                font.pixelSize: Math.round(14 * root.scaleFactor)
+                                font.bold: isSelected
+                            }
+                            Text {
+                                text: model.name || "Session"
+                                color: legendHover.containsMouse ? (isSelected ? "#7B3F00" : "#1A1A00") : (isSelected ? "#F0B840" : "#A08030")
+                                font.family: uiFont.name
+                                font.pixelSize: Math.round(14 * root.scaleFactor)
+                                font.bold: isSelected
+                            }
+                        }
+                    }
+                }
+
+                MouseArea {
+                    id: legendHover
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.NoButton
+                }
+            }
+
             // Keyboard Indicator
             KeyboardIndicator {
                 id: keyboardIndicator
@@ -286,6 +355,85 @@ Rectangle {
                 textColor: root.matrixGreen
                 glowColor: root.glowColor
                 fontSize: Math.round(14 * root.scaleFactor)
+            }
+
+            // Power buttons — top-right of screen
+            Row {
+                id: powerButtons
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: Math.round(22 * root.scaleFactor)
+                anchors.rightMargin: Math.round(22 * root.scaleFactor)
+                spacing: Math.round(10 * root.scaleFactor)
+
+                Rectangle {
+                    width: Math.round(44 * root.scaleFactor)
+                    height: Math.round(44 * root.scaleFactor)
+                    radius: Math.round(22 * root.scaleFactor)
+                    color: shutBtn.containsMouse ? Qt.rgba(0.3, 0, 0, 0.5) : "transparent"
+                    border.color: root.matrixGreen
+                    border.width: 1
+                    opacity: shutBtn.containsMouse ? 1.0 : 0.55
+                    Text {
+                        anchors.centerIn: parent
+                        text: "⏻"
+                        color: shutBtn.containsMouse ? "#FF6666" : root.matrixGreen
+                        font.pixelSize: Math.round(20 * root.scaleFactor)
+                    }
+                    MouseArea {
+                        id: shutBtn
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: sddm.powerOff()
+                    }
+                }
+
+                Rectangle {
+                    width: Math.round(44 * root.scaleFactor)
+                    height: Math.round(44 * root.scaleFactor)
+                    radius: Math.round(22 * root.scaleFactor)
+                    color: rebootBtn.containsMouse ? Qt.rgba(0, 0.2, 0, 0.5) : "transparent"
+                    border.color: root.matrixGreen
+                    border.width: 1
+                    opacity: rebootBtn.containsMouse ? 1.0 : 0.55
+                    Text {
+                        anchors.centerIn: parent
+                        text: "↻"
+                        color: root.matrixGreen
+                        font.pixelSize: Math.round(22 * root.scaleFactor)
+                    }
+                    MouseArea {
+                        id: rebootBtn
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: sddm.reboot()
+                    }
+                }
+
+                Rectangle {
+                    width: Math.round(44 * root.scaleFactor)
+                    height: Math.round(44 * root.scaleFactor)
+                    radius: Math.round(22 * root.scaleFactor)
+                    color: sleepBtn.containsMouse ? Qt.rgba(0, 0, 0.2, 0.5) : "transparent"
+                    border.color: root.matrixGreen
+                    border.width: 1
+                    opacity: sleepBtn.containsMouse ? 1.0 : 0.55
+                    Text {
+                        anchors.centerIn: parent
+                        text: "◐"
+                        color: sleepBtn.containsMouse ? "#6666FF" : root.matrixGreen
+                        font.pixelSize: Math.round(20 * root.scaleFactor)
+                    }
+                    MouseArea {
+                        id: sleepBtn
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: sddm.suspend()
+                    }
+                }
             }
         }
     }
@@ -394,7 +542,7 @@ Rectangle {
         }
     }
     
-    Keys.onPressed: {
+    Keys.onPressed: function(event) {
         // Skip intro
         if (!root.introComplete && root.introSkippable) {
             root.introComplete = true
@@ -402,7 +550,7 @@ Rectangle {
             event.accepted = true
             return
         }
-        
+
         // Switch keyboard layout (Alt+Shift only)
         if (event.modifiers & Qt.AltModifier && event.key === Qt.Key_Shift) {
             keyboardIndicator.switchLayout()
