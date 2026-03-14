@@ -108,40 +108,56 @@ Rectangle {
     // SCREEN DETECTION
     // ==========================================================================
     function getScreenType() {
+        console.log("[Main] getScreenType — monitorCount=" + monitorCount
+            + " Screen.virtualX=" + root.Screen.virtualX
+            + " screenModel.rowCount=" + (screenModel ? screenModel.rowCount() : "N/A"))
+
         if (monitorCount <= 1) {
+            console.log("[Main] single monitor — returning 'center'")
             return "center"
         }
-        
+
         var screens = []
         for (var i = 0; i < screenModel.rowCount(); i++) {
+            var geo = screenModel.geometry(i)
             screens.push({
                 index: i,
-                x: screenModel.geometry(i).x,
-                width: screenModel.geometry(i).width,
+                x: geo.x,
+                width: geo.width,
                 primary: i === screenModel.primary
             })
+            console.log("[Main]   screenModel[" + i + "]: x=" + geo.x + " w=" + geo.width + " primary=" + (i === screenModel.primary))
         }
-        
+
         screens.sort(function(a, b) { return a.x - b.x })
-        
+
         var currentX = root.Screen.virtualX
-        var screenIndex = 0
+        var screenIndex = -1
         for (var j = 0; j < screens.length; j++) {
             if (Math.abs(screens[j].x - currentX) < 100) {
                 screenIndex = j
                 break
             }
         }
-        
-        if (screens.length === 2) {
-            return screenIndex === 0 ? "left" : "center"
-        } else if (screens.length >= 3) {
-            if (screenIndex === 0) return "left"
-            if (screenIndex === screens.length - 1) return "right"
+
+        if (screenIndex === -1) {
+            console.warn("[Main] no screen matched virtualX=" + currentX + " — falling back to 'center'")
             return "center"
         }
-        
-        return "center"
+
+        var result
+        if (screens.length === 2) {
+            result = screenIndex === 0 ? "left" : "center"
+        } else if (screens.length >= 3) {
+            if (screenIndex === 0) result = "left"
+            else if (screenIndex === screens.length - 1) result = "right"
+            else result = "center"
+        } else {
+            result = "center"
+        }
+
+        console.log("[Main] screenIndex=" + screenIndex + "/" + screens.length + " → screenType='" + result + "'")
+        return result
     }
     
     property string screenType: getScreenType()
@@ -443,7 +459,10 @@ Rectangle {
         anchors.fill: parent
         visible: screenType === "left" && root.handsEnabled && monitorCount >= 2
         opacity: root.introComplete ? 1.0 : 0.0
-    
+
+        onVisibleChanged: console.log("[Main] leftContent visible=" + visible
+            + " (screenType='" + screenType + "' handsEnabled=" + root.handsEnabled + " monitorCount=" + monitorCount + ")")
+
         Behavior on opacity {
             NumberAnimation { duration: 1500; easing.type: Easing.InOutQuad }
         }
@@ -488,7 +507,10 @@ Rectangle {
         anchors.fill: parent
         visible: screenType === "right" && root.handsEnabled && monitorCount >= 3
         opacity: root.introComplete ? 1.0 : 0.0
-    
+
+        onVisibleChanged: console.log("[Main] rightContent visible=" + visible
+            + " (screenType='" + screenType + "' handsEnabled=" + root.handsEnabled + " monitorCount=" + monitorCount + ")")
+
         Behavior on opacity {
             NumberAnimation { duration: 1500; easing.type: Easing.InOutQuad }
         }
@@ -525,6 +547,49 @@ Rectangle {
     }
     
     // ==========================================================================
+    // SECONDARY MONITOR WINDOWS
+    // SDDM Wayland mode launches a single greeter window on the primary monitor.
+    // All other monitors get no window and show a black compositor background.
+    // This Repeater creates an additional Window for each screen not already
+    // covered by the main greeter window, showing matrix rain as a fallback.
+    // ==========================================================================
+
+    Repeater {
+        model: screenModel
+
+        delegate: Window {
+            id: secWin
+            property int scrIdx: index
+            property rect scrGeo: screenModel.geometry(index)
+            // Suppress this window on the screen the main greeter already occupies
+            property bool isMainScreen: Math.abs(scrGeo.x - root.Screen.virtualX) < 50
+
+            visible: !isMainScreen
+            flags: Qt.Window | Qt.FramelessWindowHint
+            width: scrGeo.width
+            height: scrGeo.height
+            color: root.backgroundColor
+
+            Component.onCompleted: {
+                console.log("[Main:secWin:" + scrIdx + "] geo=" + scrGeo.x + "," + scrGeo.y
+                    + " " + scrGeo.width + "x" + scrGeo.height
+                    + " isMainScreen=" + isMainScreen + " visible=" + visible)
+            }
+
+            MatrixRainCanvas {
+                anchors.fill: parent
+                matrixColor: root.matrixGreen
+                darkColor: root.matrixDarkGreen
+                speed: root.fallSpeed
+                depth: root.depthSpeed
+                changeRate: root.symbolChangeRate
+                glow: root.glowIntensity
+                timeOffset: root.leftMonitorOffset
+            }
+        }
+    }
+
+    // ==========================================================================
     // INPUT - Skip Intro (Mouse + Keyboard)
     // ==========================================================================
     
@@ -559,9 +624,17 @@ Rectangle {
     // ==========================================================================
     
     Component.onCompleted: {
+        console.log("[Main] onCompleted — screenType='" + screenType + "'"
+            + " monitorCount=" + monitorCount
+            + " handsEnabled=" + handsEnabled
+            + " introEnabled=" + introEnabled
+            + " size=" + width + "x" + height)
         root.forceActiveFocus()
-        
-        if (!root.introEnabled) {
+
+        // Intro only plays on the center (login) screen.
+        // Side monitors must set introComplete immediately so their content fades in.
+        if (!root.introEnabled || screenType !== "center") {
+            console.log("[Main] setting introComplete=true immediately (non-center or intro disabled)")
             root.introComplete = true
         }
     }

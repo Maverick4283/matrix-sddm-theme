@@ -741,155 +741,114 @@ Item {
             }
         }
         
-        // --- SESSION ROTARY DIAL ---
+        // --- SESSION TELEPHONE KEYPAD ---
         Item {
-            id: rotaryDial
+            id: sessionKeypad
             width: parent.width
-            height: Math.round(340 * scaleFactor)
+            height: Math.round(220 * scaleFactor)
 
-            readonly property real homeAngle:  Math.PI / 4
-            readonly property real arcSpan:    Math.PI * 1.5
-            readonly property real dialRadius: Math.round(120 * scaleFactor)
-            readonly property real centerX:    parent.width / 2
-            readonly property real centerY:    Math.round(170 * scaleFactor)
-            readonly property int  sessCount:  (typeof sessionModel !== 'undefined' && sessionModel)
-                                               ? sessionModel.count : 1
+            readonly property int sessCount: (typeof sessionModel !== 'undefined' && sessionModel)
+                                             ? sessionModel.count : 1
 
-            // Dark gray background circle — 1.14× dial diameter, 50% opacity
-            Rectangle {
-                property real bgSize: Math.round(rotaryDial.dialRadius * 2 * 1.14)
-                width:  bgSize
-                height: bgSize
-                radius: bgSize / 2
-                x: rotaryDial.centerX - bgSize / 2
-                y: rotaryDial.centerY - bgSize / 2
-                color:   "#2d2d2d"
-                opacity: 0.5
-            }
+            // Key layout: telephone order 1-9, *, 0, #
+            // Sessions map: key 1 → index 0, key 2 → index 1, … key 9 → index 8, key 0 → index 9
+            // * and # are decorative
+            readonly property var keyLabels:   ["1","2","3","4","5","6","7","8","9","*","0","#"]
+            readonly property var sessIndices: [  0,  1,  2,  3,  4,  5,  6,  7,  8, -1,  9, -1]
 
-            // Arc track
-            Canvas {
-                id: dialCanvas
-                anchors.fill: parent
+            Column {
+                anchors.centerIn: parent
+                spacing: Math.round(8 * scaleFactor)
 
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
+                // --- Nameplate ---
+                Rectangle {
+                    width: nameplateLabel.implicitWidth + Math.round(24 * scaleFactor)
+                    height: Math.round(36 * scaleFactor)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: Qt.rgba(0.78, 0.62, 0.29, 0.8)
+                    radius: Math.round(3 * scaleFactor)
 
-                    var cx = rotaryDial.centerX
-                    var cy = rotaryDial.centerY
-                    var r  = rotaryDial.dialRadius
-                    var start = rotaryDial.homeAngle - rotaryDial.arcSpan
-                    var end   = rotaryDial.homeAngle
-
-                    ctx.beginPath()
-                    ctx.arc(cx, cy, r, start, end, false)
-                    ctx.strokeStyle = "#003300"
-                    ctx.lineWidth = Math.round(3 * scaleFactor)
-                    ctx.stroke()
-
-                    // Glowing finger-stop ring at home position
-                    var sx = cx + r * Math.cos(end)
-                    var sy = cy + r * Math.sin(end)
-                    var sr = Math.round(13 * scaleFactor)
-                    ctx.shadowColor = "#00FF41"
-                    ctx.shadowBlur  = 16
-                    ctx.beginPath()
-                    ctx.arc(sx, sy, sr, 0, Math.PI * 2)
-                    ctx.strokeStyle = "#00FF41"
-                    ctx.lineWidth = Math.round(3 * scaleFactor)
-                    ctx.stroke()
-                    ctx.shadowBlur = 0
-                }
-            }
-
-            // Session nodes
-            Repeater {
-                model: typeof sessionModel !== 'undefined' ? sessionModel : null
-
-                delegate: Item {
-                    id: sessNode
-
-                    property int  offset:    (index - root.selectedSessionIndex + rotaryDial.sessCount) % rotaryDial.sessCount
-                    property bool isSelected: offset === 0
-                    property real nodeAngle: rotaryDial.sessCount <= 1
-                        ? rotaryDial.homeAngle
-                        : rotaryDial.homeAngle - offset * (rotaryDial.arcSpan / (rotaryDial.sessCount - 1))
-                    property real nodeX: rotaryDial.centerX + rotaryDial.dialRadius * Math.cos(nodeAngle)
-                    property real nodeY: rotaryDial.centerY + rotaryDial.dialRadius * Math.sin(nodeAngle)
-
-                    width:  Math.round(110 * scaleFactor)
-                    height: Math.round(40 * scaleFactor)
-                    x: nodeX - width  / 2
-                    y: nodeY - height / 2
-
-                    Rectangle {
-                        property real dotSize: isSelected ? Math.round(32 * scaleFactor) : Math.round(26 * scaleFactor)
-                        width:  dotSize
-                        height: dotSize
-                        radius: dotSize / 2
+                    Text {
+                        id: nameplateLabel
                         anchors.centerIn: parent
-                        color: isSelected ? Qt.rgba(0, 0.3, 0, 0.8) : Qt.rgba(0, 0.08, 0, 0.5)
-                        border.color: root.matrixColor
-                        border.width: isSelected ? 2 : 1
-                        opacity: isSelected ? 1.0 : 0.5
-                        layer.enabled: isSelected
-                        layer.effect: MultiEffect {
-                            autoPaddingEnabled: true
-                            shadowEnabled: true
-                            shadowColor: root.matrixColor
-                            shadowHorizontalOffset: 0
-                            shadowVerticalOffset: 0
-                            shadowBlur: 0.45
-                            shadowOpacity: 1.0
-                        }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: String(index + 1)
-                            color: root.matrixColor
-                            font.family: monoFont.name
-                            font.pixelSize: isSelected ? Math.round(14 * scaleFactor) : Math.round(12 * scaleFactor)
-                            font.bold: isSelected
-                        }
+                        text: root.currentSessionName || "Session"
+                        color: "#2D1B00"
+                        font.family: monoFont.name
+                        font.pixelSize: Math.round(13 * scaleFactor)
+                        font.bold: true
                     }
+                }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.selectedSessionIndex = index
-                            root.currentSessionName = model.name || "Session"
+                // --- Keypad grid ---
+                Grid {
+                    columns: 3
+                    columnSpacing: Math.round(6 * scaleFactor)
+                    rowSpacing: Math.round(6 * scaleFactor)
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Repeater {
+                        model: 12
+
+                        delegate: Rectangle {
+                            readonly property string keyLabel: sessionKeypad.keyLabels[index]
+                            readonly property int     sessIdx: sessionKeypad.sessIndices[index]
+                            readonly property bool    hasSession: sessIdx >= 0 && sessIdx < sessionKeypad.sessCount
+                            readonly property bool    isSelected: hasSession && sessIdx === root.selectedSessionIndex
+                            readonly property bool    isDecorative: sessIdx < 0
+
+                            width:  Math.round(82 * scaleFactor)
+                            height: Math.round(40 * scaleFactor)
+                            radius: Math.round(3 * scaleFactor)
+
+                            color: isSelected ? Qt.rgba(0, 0.3, 0, 0.8)
+                                             : Qt.rgba(0, 0.06, 0, 0.5)
+                            border.color: isSelected ? root.matrixColor
+                                        : hasSession ? Qt.darker(root.matrixColor, 1.6)
+                                        :              "#1e3320"
+                            border.width: isSelected ? 2 : 1
+                            opacity: 1.0
+
+                            layer.enabled: isSelected
+                            layer.effect: MultiEffect {
+                                autoPaddingEnabled: true
+                                shadowEnabled: true
+                                shadowColor: root.matrixColor
+                                shadowHorizontalOffset: 0
+                                shadowVerticalOffset: 0
+                                shadowBlur: 0.45
+                                shadowOpacity: 1.0
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: parent.keyLabel
+                                color: parent.isSelected ? root.matrixColor
+                                     : parent.hasSession ? Qt.darker(root.matrixColor, 1.4)
+                                     :                     "#1e4a22"
+                                font.family: monoFont.name
+                                font.pixelSize: parent.isSelected ? Math.round(15 * scaleFactor)
+                                                                  : Math.round(13 * scaleFactor)
+                                font.bold: parent.isSelected
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: parent.hasSession ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                enabled: parent.hasSession
+                                onClicked: {
+                                    root.selectedSessionIndex = parent.sessIdx
+                                    root.currentSessionName = sessionNameReader.getNameAt(parent.sessIdx) || "Session"
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // Selected session name — center of dial
-            Rectangle {
-                property real pad: Math.round(8 * scaleFactor)
-                x: Math.round(rotaryDial.centerX - width / 2)
-                y: Math.round(rotaryDial.centerY - height / 2)
-                width:  centerLabel.width  + pad * 2
-                height: centerLabel.height + pad * 2
-                color:  Qt.rgba(0.78, 0.62, 0.29, 0.8)
-                radius: Math.round(3 * scaleFactor)
-
-                Text {
-                    id: centerLabel
-                    anchors.centerIn: parent
-                    text: root.currentSessionName || "Session"
-                    color: "#2D1B00"
-                    font.family: monoFont.name
-                    font.pixelSize: Math.round(13 * scaleFactor)
-                    font.bold: true
-                }
-            }
-
-            // Scroll-wheel
+            // Scroll-wheel navigation
             WheelHandler {
                 onWheel: function(event) {
-                    var n = rotaryDial.sessCount
+                    var n = sessionKeypad.sessCount
                     if (n <= 1) return
                     if (event.angleDelta.y < 0)
                         root.selectedSessionIndex = (root.selectedSessionIndex + 1) % n

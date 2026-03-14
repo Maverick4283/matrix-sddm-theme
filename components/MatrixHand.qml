@@ -58,33 +58,44 @@ Item {
     // =========================================================================
     // LOAD ASCII FROM FILE
     // =========================================================================
-    
+
     function loadASCII() {
         if (!root.visible) {
+            console.log("[MatrixHand:" + handType + "] loadASCII skipped — not visible")
             return
         }
 
         var filename = handType === "right" ? "LeftMonitor_reduced.txt" : "RightMonitor_reduced.txt"
         var filepath = "../ascii/" + filename
-        
+        console.log("[MatrixHand:" + handType + "] loading ASCII from: " + filepath)
+
         var xhr = new XMLHttpRequest()
         xhr.open("GET", filepath, true)
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200 || xhr.status === 0) {
                     var content = xhr.responseText
+                    if (!content || content.length === 0) {
+                        console.warn("[MatrixHand:" + handType + "] file loaded but content is empty: " + filepath)
+                        return
+                    }
                     asciiLines = content.split(/\r?\n/)
-                    
+
                     while (asciiLines.length > 0 && asciiLines[asciiLines.length - 1].trim() === "") {
                         asciiLines.pop()
                     }
-                    
+
+                    console.log("[MatrixHand:" + handType + "] ASCII loaded: " + asciiLines.length + " lines from " + filepath)
                     dataLoaded = true
                     // IMPORTANT: Render once and STOP
                     handCanvas.requestPaint()
                 } else {
+                    console.warn("[MatrixHand:" + handType + "] failed to load ASCII art — status: " + xhr.status + ", file: " + filepath + " — falling back to matrix rain")
                 }
             }
+        }
+        xhr.onerror = function() {
+            console.warn("[MatrixHand:" + handType + "] XHR error loading: " + filepath + " — falling back to matrix rain")
         }
         xhr.send()
     }
@@ -120,11 +131,15 @@ Item {
     Canvas {
         id: handCanvas
         anchors.fill: parent
-        
+
         // Force proper size
         width: parent.width
         height: parent.height
-        
+
+        // Hide canvas when data hasn't loaded — keeps the canvas from presenting
+        // an opaque surface that would cover the matrix rain fallback behind it.
+        visible: root.dataLoaded
+
         // NO TIMERS! NO ANIMATIONS! RENDER ONCE!
         
         onPaint: {
@@ -236,23 +251,26 @@ Item {
     // INITIALIZATION
     // =========================================================================
     
-    Component.onCompleted: {       
+    Component.onCompleted: {
+        console.log("[MatrixHand:" + handType + "] onCompleted — visible=" + root.visible + " dataLoaded=" + dataLoaded)
         if (root.visible) {
             loadDelayTimer.start()
         }
     }
-    
+
     Timer {
         id: loadDelayTimer
         interval: 50
         running: false
         repeat: false
         onTriggered: {
+            console.log("[MatrixHand:" + handType + "] delay timer fired, calling loadASCII")
             loadASCII()
         }
     }
-    
+
     onVisibleChanged: {
+        console.log("[MatrixHand:" + handType + "] onVisibleChanged — visible=" + visible + " dataLoaded=" + dataLoaded)
         if (visible && !dataLoaded) {
             loadASCII()
         }
